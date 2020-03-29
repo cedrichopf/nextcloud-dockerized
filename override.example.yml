@@ -1,0 +1,75 @@
+#version: '3.7'
+#
+#services:
+#  nextcloud:
+#    container_name: nextcloud
+#    networks:
+#      - proxy
+#    labels:
+#      - traefik.http.routers.nextcloud-http.rule=Host(`nextcloud.example.com`)
+#      - traefik.http.routers.nextcloud-http.entrypoints=http
+#      - traefik.http.routers.nextcloud-http.middlewares=redirect
+#      - traefik.http.routers.nextcloud-https.rule=Host(`nextcloud.example.com`)
+#      - traefik.http.routers.nextcloud-https.entrypoints=https
+#      - traefik.http.routers.nextcloud-https.tls=true
+#      - traefik.http.routers.nextcloud-https.tls.certresolver=letsencrypt
+#      - traefik.http.services.nextcloud.loadbalancer.server.port=80
+#      - traefik.http.middlewares.redirect.redirectscheme.scheme=https
+#      - traefik.http.middlewares.nextcloud-dav.redirectregex.regex=https://(.*)/.well-known/(card|cal)dav
+#      - traefik.http.middlewares.nextcloud-dav.redirectregex.replacement=https://$$1/remote.php/dav/
+#      - traefik.http.middlewares.nextcloud-dav.redirectregex.permanent=true
+#      - traefik.http.middlewares.nextcloud-headers.headers.customFrameOptionsValue=SAMEORIGIN
+#      - traefik.http.middlewares.nextcloud-headers.headers.customResponseHeaders.Strict-Transport-Security=15552000
+#      - traefik.http.routers.nextcloud-https.middlewares=nextcloud-dav,nextcloud-headers
+#  cron:
+#    container_name: nextcloud-cron
+#  mysql:
+#    container_name: nextcloud-db
+#  redis:
+#    container_name: nextcloud-redis
+#  onlyoffice:
+#    container_name: nextcloud-office
+#    networks:
+#      - proxy
+#    labels:
+#      - traefik.http.routers.onlyoffice-http.rule=Host(`nextcloud.example.com`) && PathPrefix(`/office`)
+#      - traefik.http.routers.onlyoffice-http.entrypoints=http
+#      - traefik.http.routers.onlyoffice-http.middlewares=redirect
+#      - traefik.http.routers.onlyoffice-https.rule=Host(`nextcloud.example.com`) && PathPrefix(`/office`)
+#      - traefik.http.routers.onlyoffice-https.entrypoints=https
+#      - traefik.http.routers.onlyoffice-https.tls=true
+#      - traefik.http.routers.onlyoffice-https.tls.certresolver=letsencrypt
+#      - traefik.http.routers.onlyoffice-https.middlewares=office-stripprefix,office-headers
+#      - traefik.http.services.onlyoffice.loadbalancer.server.port=80
+#      - traefik.http.middlewares.redirect.redirectscheme.scheme=https
+#      - traefik.http.middlewares.office-stripprefix.stripprefix.prefixes=/office
+#      - traefik.http.middlewares.office-headers.headers.customRequestHeaders.X-Forwarded-Host=nextcloud.example.com/office
+#      - traefik.http.middlewares.office-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
+#
+#networks:
+#  proxy:
+#    external: true
+#  nextcloud:
+#    name: nextcloud
+#
+#volumes:
+#  nextcloud-vol:
+#    name: nextcloud
+#  mysql-vol:
+#    name: nextcloud-db
+#  redis-vol:
+#    name: nextcloud-redis
+#  onlyoffice-log:
+#    name: onlyoffice-log
+#  onlyoffice-lib:
+#    name: onlyoffice-lib
+#  onlyoffice-data:
+#    name: onlyoffice-data
+#  onlyoffice-db:
+#    name: onlyoffice-db
+#  onlyoffice-fonts:
+#    name: onlyoffice-fonts
+#  onlyoffice-redis:
+#    name: onlyoffice-redis
+#  onlyoffice-rabbitmq:
+#    name: onlyoffice-rabbitmq
