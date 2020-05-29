@@ -62,6 +62,17 @@ services:
       - onlyoffice-fonts:/usr/share/fonts/truetype/custom
       - onlyoffice-redis:/var/lib/redis
       - onlyoffice-rabbitmq:/var/lib/rabbitmq
+  preview-generator:
+    image: cedrichopf/preview-generator:latest
+    build: ./preview-generator
+    restart: unless-stopped
+    environment:
+      - GENERATOR_ENABLED
+      - GENERATOR_CRON
+    networks:
+      - nextcloud
+    volumes:
+      - nextcloud-vol:/var/www/html
 
 networks:
   nextcloud:

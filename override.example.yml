@@ -45,6 +45,8 @@
 #      - traefik.http.middlewares.office-stripprefix.stripprefix.prefixes=/office
 #      - traefik.http.middlewares.office-headers.headers.customRequestHeaders.X-Forwarded-Host=nextcloud.example.com/office
 #      - traefik.http.middlewares.office-headers.headers.customRequestHeaders.X-Forwarded-Proto=https
+#  preview-generator:
+#    container_name: preview-generator
 #
 #networks:
 #  proxy:
