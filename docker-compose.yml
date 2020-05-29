@@ -66,6 +66,9 @@ services:
     image: cedrichopf/preview-generator:latest
     build: ./preview-generator
     restart: unless-stopped
+    depends_on:
+      - nextcloud
+      - mysql
     environment:
       - GENERATOR_ENABLED
       - GENERATOR_CRON
