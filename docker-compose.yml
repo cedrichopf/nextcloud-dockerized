@@ -1,0 +1,48 @@
+version: '3.7'
+
+services:
+  nextcloud:
+    image: nextcloud:19
+    restart: unless-stopped
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+    networks:
+      - nextcloud
+    volumes:
+      - nextcloud-vol:/var/www/html
+      - nextcloud-data:/var/www/data
+  mysql:
+    image: mariadb:10.4
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD
+      - MYSQL_USER
+      - MYSQL_PASSWORD
+      - MYSQL_DATABASE
+    networks:
+      - nextcloud
+    volumes:
+      - mysql-vol:/var/lib/mysql
+  redis:
+    image: redis:5
+    restart: unless-stopped
+    command: [ "redis-server", "/usr/local/etc/redis/redis.conf" ]
+    networks:
+      - nextcloud
+    volumes:
+      - ./config/redis.conf:/usr/local/etc/redis/redis.conf
+      - redis-vol:/data
+
+networks:
+  nextcloud:
+    external: false
+
+volumes:
+  nextcloud-vol:
+  nextcloud-data:
+  mysql-vol:
+  redis-vol:

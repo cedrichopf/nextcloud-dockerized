@@ -1,0 +1,88 @@
+version: '3.7'
+
+services:
+  # Service Configuration
+  # Overwrite or add configuration values to the docker-compose deployment
+  nextcloud:
+    container_name: nextcloud  # Remove if using multiple instances
+    # If Traefik is not used, ports can be published by uncommenting the section below
+    # to make the Nextcloud instance available
+    #ports:
+    #  - "80:80"
+    #  - "443:443"
+    networks:
+      - proxy # Remove if Traefik is not used
+    labels:
+      # Traefik configuration for Nextcloud, Hostnames need to be changed
+      - traefik.http.routers.nextcloud-http.rule=Host(`nextcloud.example.com`)
+      - traefik.http.routers.nextcloud-http.entrypoints=http
+      - traefik.http.routers.nextcloud-http.middlewares=redirect
+      - traefik.http.routers.nextcloud-https.rule=Host(`nextcloud.example.com`)
+      - traefik.http.routers.nextcloud-https.entrypoints=https
+      - traefik.http.routers.nextcloud-https.tls=true
+      - traefik.http.routers.nextcloud-https.tls.certresolver=letsencrypt
+      - traefik.http.services.nextcloud.loadbalancer.server.port=80
+      - traefik.http.middlewares.redirect.redirectscheme.scheme=https
+      - traefik.http.middlewares.nextcloud-dav.redirectregex.regex=https://(.*)/.well-known/(card|cal)dav
+      - traefik.http.middlewares.nextcloud-dav.redirectregex.replacement=https://$$1/remote.php/dav/
+      - traefik.http.middlewares.nextcloud-dav.redirectregex.permanent=true
+      - traefik.http.middlewares.nextcloud-headers.headers.customFrameOptionsValue=SAMEORIGIN
+      - traefik.http.middlewares.nextcloud-headers.headers.customResponseHeaders.Strict-Transport-Security=15552000
+      - traefik.http.routers.nextcloud-https.middlewares=nextcloud-dav,nextcloud-headers
+  mysql:
+    container_name: nextcloud-db  # Remove if using multiple instances
+  redis:
+    container_name: nextcloud-redis  # Remove if using multiple instances
+  # OnlyOffice Service Configuration
+  # Please remove the section below if you won't use OnlyOffice in this deployment
+  onlyoffice:
+    image: onlyoffice/documentserver:latest
+    container_name: nextcloud-office # Remove if using multiple instances
+    restart: unless-stopped
+    environment:
+      - JWT_ENABLED
+      - JWT_SECRET
+    networks:
+      - nextcloud
+      - proxy # Remove if Traefik is not used
+    volumes:
+      - onlyoffice-log:/var/log/onlyoffice
+      - onlyoffice-lib:/var/lib/onlyoffice
+      - onlyoffice-data:/var/www/onlyoffice/Data
+      - onlyoffice-db:/var/lib/postgresql
+      - onlyoffice-fonts:/usr/share/fonts/truetype/custom
+      - onlyoffice-redis:/var/lib/redis
+      - onlyoffice-rabbitmq:/var/lib/rabbitmq
+
+networks:
+  # The proxy network is used by Traefik to discover and connect the HTTP services
+  proxy:
+    external: true # Remove if you're not using Traefik
+  nextcloud:
+    name: nextcloud
+
+# Change the volume configuration as needed, e.g. configure NFS volumes
+volumes:
+  nextcloud-vol:
+    name: nextcloud-web
+  nextcloud-data:
+    name: nextcloud-data
+  mysql-vol:
+    name: nextcloud-db
+  redis-vol:
+    name: nextcloud-redis
+  # Remove the volumes below if you're not using OnlyOffice
+  onlyoffice-log:
+    name: onlyoffice-log
+  onlyoffice-lib:
+    name: onlyoffice-lib
+  onlyoffice-data:
+    name: onlyoffice-data
+  onlyoffice-db:
+    name: onlyoffice-db
+  onlyoffice-fonts:
+    name: onlyoffice-fonts
+  onlyoffice-redis:
+    name: onlyoffice-redis
+  onlyoffice-rabbitmq:
+    name: onlyoffice-rabbitmq
