@@ -18,7 +18,7 @@
 
 ## Overview
 
-Current Nextcloud Version: 19
+Current Nextcloud Version: 20
 
 This repository contains a template to deploy [Nextcloud](https://nextcloud.com/) using [Docker Compose](https://docs.docker.com/compose/) on a single machine running [Docker](https://www.docker.com/).
 
