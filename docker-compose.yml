@@ -16,7 +16,7 @@ services:
       - nextcloud-vol:/var/www/html
       - nextcloud-data:/var/www/data
   mysql:
-    image: mariadb:10.4
+    image: mariadb:10.5
     restart: unless-stopped
     environment:
       - MYSQL_ROOT_PASSWORD
